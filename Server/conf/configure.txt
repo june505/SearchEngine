@@ -1,0 +1,9 @@
+ip 127.0.0.1
+port 8888
+bufSiz 10
+threadNum 5
+pagesLibPath ../../PreProcess/Library/pagesLibrary.lib
+pagesOffsetPath ../../PreProcess/Library/pagesOffset.txt
+invertIndexPath ../lib/invertIndex.lib
+indexOffsetPath ../lib/indexOffset.lib
+idfPath ../lib/idf.lib
