@@ -104,16 +104,33 @@ Task::~Task()
 
 void Task::calculateWeight(map<string,double> & query)
 {
-	cout<<"计算权重函数："<<queryStr_<<endl;
 	map<string,int> freq;
-	app_.statistics(queryStr_,freq);
-	if(freq.size()==0)
-		cout<<"查询词为空"<<endl;
+	vector<string> words;//切词结果
+	//app_.statistics(queryStr_,freq);//不能这样
+	app_.cut(queryStr_,words);//切词
+	statistics(words,freq);//词频统计
 	map<string,int>::iterator iter = freq.begin();
 	while(iter!=freq.end())
 	{
-		query[iter->first] =(iter->second)*(idf_.idf(iter->first));
+		cout<<"在calculateWeight中word:"<<iter->first<<endl;
+		query[iter->first] =(iter->second)*(idf_.idf(iter->first));// weiget = tf*idf
+		cout<<query[iter->first]<<endl;
 		iter++;
+	}
+}
+
+//词频统计
+void Task::statistics(vector<string> &words,map<string,int> &freq)
+{
+	vector<string>::iterator iter = words.begin();
+	map<string,int>::iterator pos;
+	while(iter!=words.end())
+	{
+		pos = freq.find(*iter);
+		if(pos!=freq.end())
+			freq[*iter]++;
+		else
+			freq.insert(pair<string,int>(*iter,1));
 	}
 }
 #if 1
@@ -124,7 +141,6 @@ map<int,map<string,double> > Task::intersection(map<int,map<string,double> >::it
 												string word)
 {
 	map<int,map<string,double> > result;
-	cout<<"取交集函数"<<endl;
 	while(*beg1!=*last1 && *beg2!=*last2)
 	{
 		if((*beg1)->first<(*beg2)->first)
