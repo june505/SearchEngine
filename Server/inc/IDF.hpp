@@ -43,7 +43,12 @@ public:
 
 	double idf(string word)
 	{
-		return idf_[word];
+		double ret = 0;//如果idf_中不存在，默认返回0
+		map<string,double>::iterator pos;
+		pos = idf_.find(word);
+		if(pos!=idf_.end())
+			ret = pos->second;
+		return ret;
 	}
 
 private:
