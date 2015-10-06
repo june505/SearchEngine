@@ -133,12 +133,14 @@ void Task::statistics(vector<string> &words,map<string,int> &freq)
 			freq.insert(pair<string,int>(*iter,1));
 	}
 }
-#if 1
-map<int,map<string,double> > Task::intersection(map<int,map<string,double> >::iterator *beg1,
-												map<int,map<string,double> >::iterator *last1,
-												map<int,double>::iterator *beg2,
-												map<int,double>::iterator *last2,
-												string word)
+
+//取交集
+map<int,map<string,double> > Task::intersection(
+		map<int,map<string,double> >::iterator *beg1,
+		map<int,map<string,double> >::iterator *last1,
+		map<int,double>::iterator *beg2,
+		map<int,double>::iterator *last2,
+		string word)
 {
 	map<int,map<string,double> > result;
 	while(*beg1!=*last1 && *beg2!=*last2)
@@ -160,4 +162,3 @@ map<int,map<string,double> > Task::intersection(map<int,map<string,double> >::it
 		}
 	}
 }
-#endif
