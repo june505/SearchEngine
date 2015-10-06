@@ -62,13 +62,14 @@ class InvertIndex
 
 		map<int,double> search(string query)
 		{
-			/*
+			map<int,double> notFound;
+			notFound.insert(pair<int,double>(-1,-1.0));//找不到时候返回的结果
 			map<string,map<int,double> >::iterator found;
 			found = index.find(query);
 			if(found!=index.end())
-				return (found->second);
-			*/
-			return index[query];
+				return index[query];
+			else
+				return result;
 		}
 
 	private:
