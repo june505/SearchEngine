@@ -5,6 +5,7 @@
 #include<set>
 #include <utility>
 #include<vector>
+#include<iostream>
 #include<functional>
 using namespace std;
 using namespace CppJieba;
@@ -27,6 +28,7 @@ class AutoSummary
 			vector<string> summaryRet;					//装包含关键字的句子
 			set<int> summarySet;						//句子去重
 			set<int>::iterator it;
+			KEYNUM = keywords.size();
 			for(int i = 0;i<KEYNUM;i++)
 			{
 				for(int j = 0;j<sentencesNum;j++)
@@ -43,11 +45,9 @@ class AutoSummary
 						}
 					}
 				}
-
-				if(summaryRet.size()>maxSentenceNum_)	//如果句子的数目超过预订数目，跳出循环
+				if(summaryRet.size()>maxSentenceNum_||summaryRet.size()>=sentencesNum)	
 					break;
 			}
-
 			string summaryStr;
 			int i = 0;
 			int num  = summaryRet.size();
