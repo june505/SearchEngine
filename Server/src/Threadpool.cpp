@@ -15,7 +15,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <string.h>
-#include <json/json.h>
+#include <json/json.h>	//	加载json头文件
 Threadpool::Threadpool(int bufsize,
 					   int threadNum,
 					   string & pageoffsetPath,
@@ -32,6 +32,8 @@ Threadpool::Threadpool(int bufsize,
 	summary_(app_)			//摘要取10句
 {
 	pageOffset_ = new PageOffset(pageoffsetPath_);
+	if(pageOffset_==NULL)
+		cout<<"Open pageOffset fail"<<endl;
 }
 
 Threadpool::~Threadpool()
@@ -83,6 +85,7 @@ Task* Threadpool::getTask()
  *************************************/
 void Threadpool::threadFunc()
 {
+	cout<<"threadFunc()"<<endl;
 	while(!isExit_)
 	{
 		Task *task = getTask();
@@ -112,37 +115,41 @@ void Threadpool::threadFunc()
  *************************************/
 string Threadpool::createJsonString(vector<int> &vec)//传入根据权重排序后的文档的id
 {
+
+	cout<<"createJsonString()"<<endl<<"pagelibPath"<<pagelibPath_<<endl;
 	ifstream ifs(pagelibPath_.c_str(),ios::in);
 	int i = 0;
 	int size = vec.size();
+	cout<<"交集的大小:"<<size<<endl;
 	char *buf = new char[1024*1024];	//开辟一个空间，缓存网页
-	Json::Value root;
-	Json::Value arrayObject;
-	Json::Value item;
+	Json::Value *root = new Json::Value();
+	Json::Value *arrayObject = new Json::Value();
 	while(i<size)
 	{
+		Json::Value item;
 		pair<int,int> page =(*pageOffset_)[vec[i]];		//从偏移文件中提取文档相应的offset与size
 		ifs.seekg(page.first,ios::beg);					//定位文件起始位置
 		memset(buf,0,1024*1024);
 		ifs.read(buf,page.second);						//读取一篇文档
 		string str(buf);								//C风格的字符串转化为C++风格的字符串
 		XMLParser xmlparser(str);					//将文章加入解析器
-		string title = xmlparser.parser("title");		//解析标题
-		string url = xmlparser.parser("url");			//解析url
-		string content = xmlparser.parser("content");	//解析内容
-		string summarization = summary_.summarizer(content,40);//自动提取摘要
+		string title = xmlparser.parser("doctitle");		//解析标题
+		string url = xmlparser.parser("docurl");			//解析url
+		string content = xmlparser.parser("doccontent");	//解析内容
+		string summarization = summary_.summarizer(content,5);//自动提取摘要  问题出现在这里,已解决！
 		// Json字符串序列化
-		item["id"]=i;
+		item["id"]=i+1;
 		item["title"]=title;
 		item["url"]=url;
 		item["summary"]=summarization;
-		arrayObject.append(item);
+		arrayObject->append(item);
 		i++;
 	}
 	delete buf;		//释放堆内存
 	ifs.close();
-	root["pages"]=arrayObject;
-	string serialization = root.toStyledString();		//将Json对象转为字符串
+	(*root)["pages"]=*arrayObject;
+	string serialization = root->toStyledString();		//将Json对象转为字符串
+	cout<<"要返回的结果："<<endl<<serialization<<endl;
 	return serialization;
 }
 
