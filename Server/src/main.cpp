@@ -22,11 +22,13 @@
 using namespace CppJieba;
 int main(int argc,char* argv[])
 {
+	/*
 	if(argc!=2)
 	{
 		perror("args error!");
 		exit(1);
 	}
+	*/
 	cout<<"加载Jieba分词库……";
 	 CppJieba::Application *app = new CppJieba::Application
 						   ("Statistics/dict/jieba.dict.utf8",
@@ -39,9 +41,9 @@ int main(int argc,char* argv[])
 	//从命令行参数读取配置文件
 	/*****************************************/
 	cout<<"加载搜索引擎配置……";
-	Configure conf(argv[1]);	//加载配置文件
+	//Configure conf(argv[1]);	//加载配置文件
 	cout<<" 完成"<<endl;
-	//Configure conf("../conf/configure.txt");	//加载配置文件
+	Configure conf("../conf/configure.txt");	//加载配置文件
 	cout<<"加载倒排索引文件……";
 	InvertIndex *index = new InvertIndex(conf.getConf("indexOffsetPath"),conf.getConf("invertIndexPath"));
 	cout<<" 完成"<<endl;

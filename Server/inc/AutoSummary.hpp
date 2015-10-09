@@ -109,6 +109,7 @@ class AutoSummary
 				}
 			}
 		}
+
 	private:
 		Application & app_;
 		int maxSentenceNum_;
