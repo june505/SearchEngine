@@ -25,8 +25,8 @@ class InvertIndex
 			{
 				memset(buf,0,1024*1024);
 				pair<string,map<int,double> > pr;
-				ifs.seekg(offset[idx].first,ios::beg);
-				ifs.read(buf,offset[idx].second);
+				ifs.seekg(offset[idx].first,ios::beg);//定位
+				ifs.read(buf,offset[idx].second);//读取
 				string str(buf);	//转为C++风格的字符串
 				XMLParser xmlparser(str);	//此处可以优化
 				string word = xmlparser.parser("word");
@@ -69,7 +69,7 @@ class InvertIndex
 			if(found!=index.end())
 				return index[query];
 			else
-				return result;
+				return notFound;
 		}
 
 	private:
