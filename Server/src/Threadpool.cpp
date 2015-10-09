@@ -121,6 +121,7 @@ string Threadpool::createJsonString(vector<int> &vec)//传入根据权重排序�
 	int i = 0;
 	int size = vec.size();
 	cout<<"交集的大小:"<<size<<endl;
+	cout<<"交集："<<vec<<endl;
 	char *buf = new char[1024*1024];	//开辟一个空间，缓存网页
 	Json::Value *root = new Json::Value();
 	Json::Value *arrayObject = new Json::Value();
