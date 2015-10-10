@@ -85,7 +85,6 @@ Task* Threadpool::getTask()
  *************************************/
 void Threadpool::threadFunc()
 {
-	cout<<"threadFunc()"<<endl;
 	while(!isExit_)
 	{
 		Task *task = getTask();
@@ -116,13 +115,11 @@ void Threadpool::threadFunc()
 string Threadpool::createJsonString(vector<int> &vec)//传入根据权重排序后的文档的id
 {
 
-	cout<<"createJsonString()"<<endl<<"pagelibPath"<<pagelibPath_<<endl;
 	ifstream ifs(pagelibPath_.c_str(),ios::in);
 	int i = 0;
 	int size = vec.size();
-	cout<<"交集的大小:"<<size<<endl;
-	cout<<"交集："<<vec<<endl;
-	char *buf = new char[1024*1024];	//开辟一个空间，缓存网页
+	if(size==0)
+		cout<<"无交集"<<endl;
 	Json::Value *root = new Json::Value();
 	Json::Value *arrayObject = new Json::Value();
 	while(i<size)
