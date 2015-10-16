@@ -6,12 +6,13 @@
 #include <iostream>
 Task::Task(int servfd,string queryStr,Application & app,InetAddress &clientAddr,InvertIndex & index,IDF & idf)
 	:servfd_(servfd),
-	queryStr_(queryStr),
 	app_(app),
+	queryStr_(queryStr),
 	clientAddr_(clientAddr),
 	index_(index),
 	idf_(idf)
-{}
+{
+}
 
 
 /*任务类要执行的任务
@@ -22,7 +23,7 @@ void Task::process()
 	calculateWeight(query);			//计算查询词权重
 	if(query.size()==0)
 	{
-		cout<<"查询词为空"<<endl;
+		cout<<"NULL QUERY !"<<endl;
 		return;
 	}
 	map<string,double>::iterator it = query.begin();
@@ -67,7 +68,7 @@ void Task::process()
 	//求余弦值
 	if(common.size()==0)
 	{
-		cout<<"交集为空"<<endl;
+		//cout<<"交集为空"<<endl;
 		return;
 	}
 	map<int,map<string,double> >::iterator iter = common.begin();
@@ -107,7 +108,10 @@ int Task::getServfd()
 {
 	return this->servfd_;
 }
-
+string &Task::getStr()
+{
+	return queryStr_;
+}
 
 //返回排序结果
 vector<int> Task::getRanged()

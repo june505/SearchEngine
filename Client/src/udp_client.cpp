@@ -24,8 +24,8 @@ int main()
 	Socket socket;
 	int nready;
 	int clientfd = socket.fd();
-	char buf[32];
-	char res[32];
+	char buf[128];
+	char *res = new char[1024*1024];
 	fd_set readset;
 	cout<<"客户端已经就绪>>>"<<endl;
 	while(1)
@@ -35,7 +35,7 @@ int main()
 		FD_SET(STDIN_FILENO,&readset);
 		int maxfd=MAX(clientfd,STDIN_FILENO);
 		memset(buf,'\0',sizeof(buf));
-		memset(res,'\0',sizeof(res));
+		memset(res,'\0',1024*1024);
 		nready = select(maxfd+1,&readset,NULL,NULL,NULL);
 		if(nready == -1)
 		{
@@ -49,13 +49,15 @@ int main()
 
 		if(FD_ISSET(clientfd,&readset))
 		{
+	
 			int ret = recvfrom(clientfd,res,sizeof(res),0,(struct sockaddr*)&servAddr,&addrLen);
 			if(ret<0)
 			{
 				perror("recvfrom error!");
 				exit(1);
 			}
-			cout<< res<<endl<<"--------"<<endl;
+			cout<<"strlen(res):"<<strlen(res)<<res<<endl<<"--------"<<endl;
+			
 		}
 		if(FD_ISSET(STDIN_FILENO,&readset))
 		{

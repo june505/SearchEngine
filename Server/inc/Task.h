@@ -17,10 +17,7 @@ struct Compare
 {
 	bool operator()(const Document &lhs,const Document &rhs)
 	{
-		if(rhs.cosValue>lhs.cosValue)
-			return true;
-		else
-			return false;
+		return (rhs.cosValue>lhs.cosValue);
 	}
 };
 class Task
@@ -34,11 +31,13 @@ class Task
 				IDF & idf);
 		void process();
 		int getServfd();
+		string &getStr();
 		vector<int> getRanged();
 		InetAddress  & getAddr();
 		~Task();
 	private:
 		void calculateWeight(map<string,double> & query);
+		void statistics(vector<string> &words,map<string,int> &freq);
 		map<int,map<string,double> > intersection(map<int,map<string,double> >::iterator *beg1,
 												  map<int,map<string,double> >::iterator *last1, 
 												  map<int,double>::iterator *beg2,

@@ -1,0 +1,15 @@
+2015-10-15 07:40:13,024: INFO  :Mylog create success
+2015-10-15 07:40:22,264: INFO  :Mylog create success
+2015-10-15 07:41:05,943: INFO  :Redis connecting success! ##Threadpool.cpp:Threadpool:45##
+2015-10-15 07:41:05,945: INFO  :Threadpool starting …… ##Threadpool.cpp:start:64##
+2015-10-15 07:41:05,945: INFO  :Server is ready to wait for connecting…… ##main.cpp:main:75##
+2015-10-15 08:29:16,317: INFO  : Connecting from 127.0.0.1 Query : 世界经济全球化 ##main.cpp:main:88##
+2015-10-15 08:29:16,318: INFO  :世界经济全球化 is found in cache …… ##Threadpool.cpp:threadFunc:123##
+2015-10-15 08:29:40,618: INFO  : Connecting from 127.0.0.1 Query : 文艺复兴 ##main.cpp:main:88##
+2015-10-15 08:29:41,162: INFO  :文艺复兴's result add into cache …… ##Threadpool.cpp:threadFunc:138##
+2015-10-15 08:33:12,144: INFO  : Connecting from 127.0.0.1 Query : 世界经济全球化 ##main.cpp:main:88##
+2015-10-15 08:33:12,149: INFO  :世界经济全球化 is found in cache …… ##Threadpool.cpp:threadFunc:123##
+2015-10-15 08:33:25,206: INFO  : Connecting from 127.0.0.1 Query : 文艺复兴时期 ##main.cpp:main:88##
+2015-10-15 08:33:25,694: INFO  :文艺复兴时期's result add into cache …… ##Threadpool.cpp:threadFunc:138##
+2015-10-15 08:33:35,721: INFO  : Connecting from 127.0.0.1 Query : 文艺复兴时期 ##main.cpp:main:88##
+2015-10-15 08:33:35,722: INFO  :文艺复兴时期 is found in cache …… ##Threadpool.cpp:threadFunc:123##

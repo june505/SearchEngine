@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <json/json.h>	//	加载json头文件
+//#define LOG4CPP
+#include "../inc/Mylog.h"
 Threadpool::Threadpool(int bufsize,
 					   int threadNum,
 					   string & pageoffsetPath,
@@ -33,24 +35,39 @@ Threadpool::Threadpool(int bufsize,
 {
 	pageOffset_ = new PageOffset(pageoffsetPath_);
 	if(pageOffset_==NULL)
-		cout<<"Open pageOffset fail"<<endl;
+		LOG_ERROR("PageOffset Loading fail!");
+	conn = redisConnect("127.0.0.1",6379);
+	if(conn!=NULL&&conn->err)
+	{
+		LOG_ERROR("Redis connecting fail!");
+	}else
+	{
+		LOG_INFO("Redis connecting success!");
+	}
 }
 
 Threadpool::~Threadpool()
 {
 	stop();
+	if(conn!=NULL)
+	{
+		redisReply *reply;
+		reply = (redisReply*)redisCommand(conn,"SAVE");
+		freeReplyObject(reply);
+		redisFree(conn);
+	}
 }
 
 
 void Threadpool::start()
 {
+	LOG_INFO("Threadpool starting ……");
 	for(int idx = 0;idx!=threadNum_;idx++)
 	{
 		Thread *pthread = new MyPoolThread(*this);
 		vecThreads_.push_back(pthread);
 		pthread->start();
 	}
-
 }
 
 
@@ -67,6 +84,7 @@ void Threadpool::stop()
 		}
 		vecThreads_.clear();
 	}
+	LOG_INFO("Threadpool stop ……");
 }
 
 void Threadpool::addTask(Task* task)
@@ -90,10 +108,44 @@ void Threadpool::threadFunc()
 		Task *task = getTask();
 		if(task != NULL)
 		{
-			task->process();						//执行task中的process()函数
-			vector<int> ranged = task->getRanged();	//从Task对象中返回排序结果
+			/*此处代码表示查询缓存*/
+			string res;
+			redisReply *reply;
+			string s= task->getStr();
+			/*
+			int len = s1.size();
+			string s = s1.substr(0,len-1); 
+			*/
+			reply = (redisReply*)redisCommand(conn,"get %s",s.c_str());
+			if(reply->str!=NULL)
+			{
+				s = s+" is found in cache ……";
+				LOG_INFO(s.c_str());
+				res=reply->str;
+				freeReplyObject(reply);
+			}
+			else
+			{
+				task->process();						//执行task中的process()函数
+				vector<int> ranged = task->getRanged();	//从Task对象中返回排序结果
+				res = createJsonString(ranged);	//返回jsonString
+				/*将查询结果加入缓存·*/
+				if(!res.empty())
+				{
+					redisReply *reply1;
+					reply1 = (redisReply*)redisCommand(conn,"SET %s %s",s.c_str(),res.c_str());
+					s=s+"\'s result add into cache ……";
+					LOG_INFO(s.c_str());
+					freeReplyObject(reply1);
+				}
+				else
+				{
+					s=s+" not found ……";
+					LOG_INFO(s.c_str());
+				}
+
+			}
 			SocketIO sockio(task->getServfd());		//返回socket文件描述符
-			string res = createJsonString(ranged);	//返回jsonString
 			InetAddress addr = task->getAddr();		//获取Task对象中的客户端地址
 			addr.port();							//客户端端口号
 			//发送给客户端
@@ -118,8 +170,6 @@ string Threadpool::createJsonString(vector<int> &vec)//传入根据权重排序�
 	ifstream ifs(pagelibPath_.c_str(),ios::in);
 	int i = 0;
 	int size = vec.size();
-	if(size==0)
-		cout<<"无交集"<<endl;
 	char *buf = new char[1024*1024];
 	Json::Value *root = new Json::Value();
 	Json::Value *arrayObject = new Json::Value();
@@ -146,10 +196,15 @@ string Threadpool::createJsonString(vector<int> &vec)//传入根据权重排序�
 	}
 	delete buf;		//释放堆内存
 	ifs.close();
+	string ret;
 	(*root)["pages"]=*arrayObject;
-	string serialization = root->toStyledString();		//将Json对象转为字符串
-	cout<<"要返回的结果："<<endl<<serialization<<endl;
-	return serialization;
+	if(size!=0)
+		return root->toStyledString();		//将Json对象转为字符串
+	else
+	{
+	//	cout<<"No intersection!"<<endl;
+		return ret;
+	}
 }
 
 

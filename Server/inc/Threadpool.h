@@ -6,6 +6,7 @@
 #include "PageOffset.hpp"
 #include <vector>
 #include <string>
+#include <hiredis/hiredis.h>
 class Task;
 class Thread;
 
@@ -40,6 +41,7 @@ private:
 	std::vector<Thread *> vecThreads_;		//工作线程池
 	Application & app_;						//分词库
 	AutoSummary summary_;					//自动摘要
+	redisContext *conn;
 /*************************************/
 };
 #endif
